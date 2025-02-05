@@ -164,35 +164,95 @@ int bookCounter = 0;
 
 /*********** Fonctions du programme ***********/
 //Fonction pour ajouter un nouveau client
-void addClient(String name, int phone) {
-  Client(cCounter, name, 0, phone);
+void addClient() {
+  print("Donner le nom du client");
+  String? name = stdin.readLineSync();
+  if (name != null) {
+    print("Entrez le numéro de téléphone du client.");
+    String? tel = stdin.readLineSync();
+    int? phone = int.tryParse(tel ?? "0");
+    if (phone != null) {
+      Client(cCounter, name, 0, phone);
+    }
+  }
   cCounter++;
 }
 
 //Fonction pour ajouter un nouveau livre
-void addBook(String name, String author, String category, int qty) {
-  Book(bookCounter, name, author, category, true, qty);
-  cCounter++;
+void addBook() {
+  print("Donner le nom du livre");
+  String? name = stdin.readLineSync();
+  if (name != null) {
+    print("Donner le nom de l'auteur.");
+    String? author = stdin.readLineSync();
+    if (author != null) {
+      print("Entrée le genre du livre.");
+      String? category = stdin.readLineSync();
+      if (category != null) {
+        print("Entrez le nombre d'examplaires.");
+        String? qtity = stdin.readLineSync();
+        int? qty = int.tryParse(qtity ?? "0");
+        if (qty != null) {
+          Book(bookCounter, name, author, category, true, qty);
+        }
+      }
+    }
+  }
+  bookCounter++;
 }
 
 //Fonction pour l'emprunt d'un livre
-void recordBorrow(Client? client, Book? book) {
-  if (client != null && book != null) {
-    book.setQty = -1;
-    client.setbCt = 1;
-    Borrows(bCounter, book, client, DateTime.now());
-    bCounter++;
-    print("Emprunt de livre enregistré.");
+void recordBorrow() {
+  print("Donner l'identifiant du client");
+  String? idClient = stdin.readLineSync();
+  int? clientId = int.tryParse(idClient ?? "0");
+
+  if (clientId != null) {
+    print("Donner l'identifiant du livre");
+    String? idBook = stdin.readLineSync();
+    int? bookId = int.tryParse(idBook ?? "0");
+    if (bookId != null) {
+      Client? client = Client.getClientById(clientId);
+      Book? book = Book.getbookById(bookId);
+      if (client != null && book != null) {
+        book.setQty = -1;
+        client.setbCt = 1;
+        Borrows(bCounter, book, client, DateTime.now());
+        bCounter++;
+        print("Emprunt de livre enregistré.");
+      }
+    } else {
+      print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+    }
+  } else {
+    print("Il y'a erreur dans votre saisie. Veillez recommencer.");
   }
 }
 
 //Fonction pour la remise d'un livre
-void recordReturn(Client? client, Book? book) {
-  if (client != null && book != null) {
-    book.setQty = 1;
-    client.setbCt = -1;
-    Returns(bCounter, book, client, DateTime.now());
-    print("Remise de livre enregistrée.");
+void recordReturn() {
+  print("Donner l'identifiant du client");
+  String? idClient = stdin.readLineSync();
+  int? clientId = int.tryParse(idClient ?? "0");
+
+  if (clientId != null) {
+    print("Donner l'identifiant du livre");
+    String? idBook = stdin.readLineSync();
+    int? bookId = int.tryParse(idBook ?? "0");
+    if (bookId != null) {
+      Client? client = Client.getClientById(clientId);
+      Book? book = Book.getbookById(bookId);
+      if (client != null && book != null) {
+        book.setQty = 1;
+        client.setbCt = -1;
+        Returns(bCounter, book, client, DateTime.now());
+        print("Remise de livre enregistrée.");
+      }
+    } else {
+      print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+    }
+  } else {
+    print("Il y'a erreur dans votre saisie. Veillez recommencer.");
   }
 }
 
@@ -222,51 +282,18 @@ void main() {
     } else if (action == 3) {
       Borrows.displayBorrows();
     } else if (action == 4) {
-      print("Donner l'identifiant du client");
-      String? idClient = stdin.readLineSync();
-      int? clientId = int.tryParse(idClient ?? "0");
-
-      if (clientId != null) {
-        print("Donner l'identifiant du livre");
-        String? idBook = stdin.readLineSync();
-        int? bookId = int.tryParse(idBook ?? "0");
-        if (bookId != null) {
-          Client? client = Client.getClientById(clientId);
-          Book? book = Book.getbookById(bookId);
-          recordBorrow(client, book);
-        } else {
-          print("Il y'a erreur dans votre saisie. Veillez recommencer.");
-        }
-      } else {
-        print("Il y'a erreur dans votre saisie. Veillez recommencer.");
-      }
+      recordBorrow();
     } else if (action == 5) {
-      print("Donner l'identifiant du client");
-      String? idClient = stdin.readLineSync();
-      int? clientId = int.tryParse(idClient ?? "0");
-
-      if (clientId != null) {
-        print("Donner l'identifiant du livre");
-        String? idBook = stdin.readLineSync();
-        int? bookId = int.tryParse(idBook ?? "0");
-        if (bookId != null) {
-          Client? client = Client.getClientById(clientId);
-          Book? book = Book.getbookById(bookId);
-          recordReturn(client, book);
-        } else {
-          print("Il y'a erreur dans votre saisie. Veillez recommencer.");
-        }
-      } else {
-        print("Il y'a erreur dans votre saisie. Veillez recommencer.");
-      }
+      recordReturn();
     } else if (action == 6) {
-      Book.displayBooks();
+      addBook();
     } else if (action == 7) {
-      Book.displayBooks();
-    } else if (action != 8) {
-      print("Vous avez choisi l'action $action.\n");
+      addClient();
+    } else if (action == 8) {
+      print("Programme terminé. À bientôt !");
     }
   } while (action != 8);
 
+  Book.displayBooks();
   print("Programme terminé. À bientôt !");
 }
