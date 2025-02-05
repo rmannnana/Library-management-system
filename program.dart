@@ -17,9 +17,10 @@ class Book {
     booksList.add(this);
   }
 
+  //La façon dont les livres  vont être présentés si on les liste
   @override
   String toString() {
-    return 'Titre: $name, Auteur: $author';
+    return 'ID: $id, Titre: $name, Auteur: $author';
   }
 
   //Setter pour retirer/ajouter un exemplaire en cas d'emprunt/remise
@@ -60,12 +61,19 @@ class Client {
   String name;
   int borrowCount;
   int phone;
+
+  //Liste statique pour pouvoir afficher les clients
+  static List<Client> clientsList = [];
+
   Client(this.id, this.name, this.borrowCount, this.phone) {
     clientsList.add(this);
   }
 
-  //Liste statique pour pouvoir afficher les clients
-  static List<Client> clientsList = [];
+  //La façon dont les clients vont être présentés si on les liste
+  @override
+  String toString() {
+    return 'ID: $id, Nom: $name, Téléphone: $phone';
+  }
 
   //Setter pour incrémenter/décrémenter le compteur d'emprunts
   set setbCt(int n) {
@@ -76,14 +84,14 @@ class Client {
     }
   }
 
-  // Méthode statique pour afficher les livres
+  // Méthode statique pour afficher les clients
   static void displayClients() {
     if (clientsList.isEmpty) {
       print("Aucun client n'est encore enregistré.");
     } else {
-      print("Liste des livres enregistrés :");
-      for (var livre in clientsList) {
-        print(livre);
+      print("Liste des clients enregistrés :");
+      for (var client in clientsList) {
+        print(client);
       }
     }
   }
@@ -184,6 +192,7 @@ void addClient() {
     int? phone = int.tryParse(tel ?? "0");
     if (phone != null) {
       Client(cCounter, name, 0, phone);
+      print("Le client a bien été enregistré.");
     }
   }
   cCounter++;
@@ -205,6 +214,7 @@ void addBook() {
         int? qty = int.tryParse(qtity ?? "0");
         if (qty != null) {
           Book(bookCounter, name, author, category, true, qty);
+          print("Le livre a bien été enregistré.");
         }
       }
     }
