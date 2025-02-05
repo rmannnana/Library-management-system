@@ -23,8 +23,14 @@ class Book {
   }
 
   //Setter pour retirer/ajouter un exemplaire en cas d'emprunt/remise
-  set setQty(n) =>
-      (n > 0 || quantity > 0) ? quantity + n : print("Stock épuisé.");
+  set setQty(int n) {
+    if (quantity + n >= 0) {
+      quantity += n;
+    } else {
+      print("Stock épuisé.");
+    }
+  }
+
   // Méthode statique pour afficher les livres
   static void displayBooks() {
     if (booksList.isEmpty) {
@@ -62,9 +68,14 @@ class Client {
   static List<Client> clientsList = [];
 
   //Setter pour incrémenter/décrémenter le compteur d'emprunts
-  set setbCt(n) => (borrowCount > 0 && borrowCount <= 3)
-      ? borrowCount + n
-      : print("Le client ne peut pas emprunter plus de trois livres.");
+  set setbCt(int n) {
+    if (borrowCount + n >= 0 && borrowCount + n <= 3) {
+      borrowCount += n;
+    } else {
+      print("Le client ne peut pas emprunter plus de trois livres.");
+    }
+  }
+
   // Méthode statique pour afficher les livres
   static void displayClients() {
     if (clientsList.isEmpty) {
@@ -113,8 +124,8 @@ class Borrows {
       print("Aucun livre n'a encore été emprunté.");
     } else {
       print("Liste des livres enregistrés :");
-      for (var livre in borrowsList) {
-        print(livre);
+      for (var borrow in borrowsList) {
+        print(borrow.show);
       }
     }
   }
@@ -145,8 +156,8 @@ class Returns {
       print("Aucun livre n'a encore été retourné.");
     } else {
       print("Liste des livres enregistrés :");
-      for (var livre in returnsList) {
-        print(livre);
+      for (var r in returnsList) {
+        print(r.show);
       }
     }
   }
@@ -273,27 +284,35 @@ void main() {
     String? userInput = stdin.readLineSync();
     action = int.tryParse(userInput ?? "0");
 
-    if (action == null || action < 1 || action > 8) {
-      print("Entrée invalide. Veuillez entrer un numéro entre 1 et 8.");
-    } else if (action == 1) {
-      Book.displayBooks();
-    } else if (action == 2) {
-      Client.displayClients();
-    } else if (action == 3) {
-      Borrows.displayBorrows();
-    } else if (action == 4) {
-      recordBorrow();
-    } else if (action == 5) {
-      recordReturn();
-    } else if (action == 6) {
-      addBook();
-    } else if (action == 7) {
-      addClient();
-    } else if (action == 8) {
-      print("Programme terminé. À bientôt !");
+    switch (action) {
+      case 1:
+        Book.displayBooks();
+        break;
+      case 2:
+        Client.displayClients();
+        break;
+      case 3:
+        Borrows.displayBorrows();
+        break;
+      case 4:
+        recordBorrow();
+        break;
+      case 5:
+        recordReturn();
+        break;
+      case 6:
+        addBook();
+        break;
+      case 7:
+        addClient();
+        break;
+      case 8:
+        print("Programme terminé. À bientôt !");
+        break;
+      default:
+        print("Entrée invalide. Veuillez entrer un numéro entre 1 et 8.");
     }
   } while (action != 8);
 
-  Book.displayBooks();
   print("Programme terminé. À bientôt !");
 }
