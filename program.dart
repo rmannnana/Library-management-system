@@ -36,6 +36,16 @@ class Book {
       }
     }
   }
+
+  // Méthode pour afficher récupérer un livre avec son identifiant
+  static Book? getbookById(int id) {
+    for (Book book in booksList) {
+      if (book.id == id) {
+        return book; // Renvois le livre
+      }
+    }
+    return null; // Renvoie null en si le livre n'est pas trouvé
+  }
 }
 
 class Client {
@@ -66,6 +76,16 @@ class Client {
       }
     }
   }
+
+  // Méthode pour afficher récupérer un client avec son identifiant
+  static Client? getClientById(int id) {
+    for (Client client in clientsList) {
+      if (client.id == id) {
+        return client; // Renvois le client
+      }
+    }
+    return null; // Renvoie null en si le client n'est pas trouvé
+  }
 }
 
 class Borrows {
@@ -88,7 +108,7 @@ class Borrows {
   }
 
   // Méthode statique pour afficher les livres
-  static void displayClients() {
+  static void displayBorrows() {
     if (borrowsList.isEmpty) {
       print("Aucun livre n'a encore été emprunté.");
     } else {
@@ -120,7 +140,7 @@ class Returns {
   }
 
   // Méthode statique pour afficher les livres
-  static void displayClients() {
+  static void displayReturns() {
     if (returnsList.isEmpty) {
       print("Aucun livre n'a encore été retourné.");
     } else {
@@ -156,11 +176,13 @@ void addBook(String name, String author, String category, int qty) {
 }
 
 //Fonction pour l'emprunt d'un livre
-void recordBorrow(Client client, Book book) {
-  book.setQty = -1;
-  client.setbCt = 1;
-  Borrows(bCounter, book, client, DateTime.now());
-  bCounter++;
+void recordBorrow(Client? client, Book? book) {
+  if (client != null && book != null) {
+    book.setQty = -1;
+    client.setbCt = 1;
+    Borrows(bCounter, book, client, DateTime.now());
+    bCounter++;
+  }
 }
 
 //Fonction pour la remise d'un livre
@@ -190,6 +212,35 @@ void main() {
     if (action == null || action < 1 || action > 8) {
       print("Entrée invalide. Veuillez entrer un numéro entre 1 et 8.");
     } else if (action == 1) {
+      Book.displayBooks();
+    } else if (action == 2) {
+      Client.displayClients();
+    } else if (action == 3) {
+      Borrows.displayBorrows();
+    } else if (action == 4) {
+      print("Donner l'identifiant du client");
+      String? idClient = stdin.readLineSync();
+      int? clientId = int.tryParse(idClient ?? "0");
+
+      if (clientId != null) {
+        print("Donner l'identifiant du livre");
+        String? idBook = stdin.readLineSync();
+        int? bookId = int.tryParse(idBook ?? "0");
+        if (bookId != null) {
+          Client? client = Client.getClientById(clientId);
+          Book? book = Book.getbookById(bookId);
+          recordBorrow(client, book);
+        } else {
+          print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+        }
+      } else {
+        print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+      }
+    } else if (action == 5) {
+      Book.displayBooks();
+    } else if (action == 6) {
+      Book.displayBooks();
+    } else if (action == 7) {
       Book.displayBooks();
     } else if (action != 8) {
       print("Vous avez choisi l'action $action.\n");
