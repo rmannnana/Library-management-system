@@ -182,14 +182,18 @@ void recordBorrow(Client? client, Book? book) {
     client.setbCt = 1;
     Borrows(bCounter, book, client, DateTime.now());
     bCounter++;
+    print("Emprunt de livre enregistré.");
   }
 }
 
 //Fonction pour la remise d'un livre
-void recordReturn(Client client, Book book) {
-  book.setQty = 1;
-  client.setbCt = -1;
-  Returns(bCounter, book, client, DateTime.now());
+void recordReturn(Client? client, Book? book) {
+  if (client != null && book != null) {
+    book.setQty = 1;
+    client.setbCt = -1;
+    Returns(bCounter, book, client, DateTime.now());
+    print("Remise de livre enregistrée.");
+  }
 }
 
 void main() {
@@ -237,7 +241,24 @@ void main() {
         print("Il y'a erreur dans votre saisie. Veillez recommencer.");
       }
     } else if (action == 5) {
-      Book.displayBooks();
+      print("Donner l'identifiant du client");
+      String? idClient = stdin.readLineSync();
+      int? clientId = int.tryParse(idClient ?? "0");
+
+      if (clientId != null) {
+        print("Donner l'identifiant du livre");
+        String? idBook = stdin.readLineSync();
+        int? bookId = int.tryParse(idBook ?? "0");
+        if (bookId != null) {
+          Client? client = Client.getClientById(clientId);
+          Book? book = Book.getbookById(bookId);
+          recordReturn(client, book);
+        } else {
+          print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+        }
+      } else {
+        print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+      }
     } else if (action == 6) {
       Book.displayBooks();
     } else if (action == 7) {
