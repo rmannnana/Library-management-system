@@ -118,7 +118,7 @@ class Borrows {
 
   //Getter pour afficher les informations d'un emprunt.
   String get show {
-    return "Le client ${client.name} a emprunter le livre ${book.name} de ${book.author} à la date: $date";
+    return "N°$id:__IDclient: ${client.id} : ${client.name} -- IDlivre: ${book.id} : ${book.name} || Date: $date";
   }
 
   // Méthode statique pour afficher les livres
@@ -208,9 +208,13 @@ void addBook() {
         print("Entrez le nombre d'examplaires.");
         String? qtity = stdin.readLineSync();
         int? qty = int.tryParse(qtity ?? "0");
-        if (qty != null) {
-          Book(bookCounter, name, author, category, true, qty);
-          print("Le livre a bien été enregistré.");
+        if (qty != null && qty.runtimeType == int) {
+          if (qty.runtimeType == int) {
+            Book(bookCounter, name, author, category, true, qty);
+            print("Le livre a bien été enregistré.");
+          }
+        } else {
+          print("Veuillez entrer une valeur numérique.");
         }
       }
     }
@@ -225,22 +229,26 @@ void recordBorrow() {
   //Récupération du client (la fonction continuera si le client existe).
   Client? client = Client.getClientById(clientId);
   if (client != null) {
-    print("Donner l'identifiant du livre");
-    String? idBook = stdin.readLineSync();
-    int? bookId = int.tryParse(idBook ?? "0");
-    //Récupération du livre (la fonction continuera si le livre existe).
-    Book? book = Book.getbookById(bookId);
-    if (book != null) {
-      if (client.borrowCount <= 3 && book.quantity > 0) {
-        book.setQty = -1;
-        client.setbCt = 1;
-        Borrows(bCounter, book, client, DateTime.now());
-        print("Emprunt de livre enregistré.");
+    if (client.borrowCount < 3) {
+      print("Donner l'identifiant du livre");
+      String? idBook = stdin.readLineSync();
+      int? bookId = int.tryParse(idBook ?? "0");
+      //Récupération du livre (la fonction continuera si le livre existe).
+      Book? book = Book.getbookById(bookId);
+      if (book != null) {
+        if (book.quantity > 0) {
+          book.setQty = -1;
+          client.setbCt = 1;
+          Borrows(bCounter, book, client, DateTime.now());
+          print("Emprunt de livre enregistré.");
+        } else {
+          print("Le stock du livre est épuisé.");
+        }
       } else {
-        print("Le client a déjà 3emprunts en cours.");
+        print("Identifiant incorrect.");
       }
     } else {
-      print("Identifiant incorrect.");
+      print("Cet abonné a déjà 3 emprunts en cours de validité.");
     }
   } else {
     print("Identifiant incorrect.");
@@ -275,6 +283,25 @@ void recordReturn() {
 }
 
 void main() {
+  //Création d'objet Client et Book pour gagner du temps dans le test de la fonction d'enregistrement d'emprunt
+  /****Book */
+  Book(bookCounter, "Guide de l'informaticien", "B. Hermann NANA",
+      "Informatique", true, 50);
+  Book(bookCounter, "Les concepts de la programmation Orientée Objet",
+      "Anne KABORE", "Informatique", true, 70);
+  Book(bookCounter, "Le guide électronique", "Salimata OUEDRAOGO",
+      "Electronique", true, 50);
+  Book(bookCounter, "Les fondamentaux de la géomatique", "Ahmed SAWADOGO",
+      "Géomatique", true, 26);
+  Book(bookCounter, "La géopolitique pour les nuls", "Henri ZONGO",
+      "Science-Po", true, 50);
+  /****Client */
+  Client(cCounter, "Gilbert Kabore", 0, 4578496);
+  Client(cCounter, "Aline NANA", 0, 4578496);
+  Client(cCounter, "Sabas ILBOUDO", 0, 4578496);
+  Client(cCounter, "Julia TRAORE", 0, 4578496);
+  Client(cCounter, "Grâce SAWADOGO", 0, 4578496);
+
   int? action = 0;
   do {
     print(
@@ -320,6 +347,4 @@ void main() {
         print("Entrée invalide. Veuillez entrer un numéro entre 1 et 8.");
     }
   } while (action != 8);
-
-  print("Programme terminé. À bientôt !");
 }
