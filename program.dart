@@ -15,7 +15,7 @@ class Book {
   Book(this.id, this.name, this.author, this.category, this.available,
       this.quantity) {
     booksList.add(this);
-    bCounter++;
+    bookCounter++;
   }
 
   //La façon dont les livres  vont être présentés si on les liste
@@ -64,6 +64,7 @@ class Client {
 
   Client(this.id, this.name, this.borrowCount, this.phone) {
     clientsList.add(this);
+    cCounter++;
   }
 
   //La façon dont les clients vont être présentés si on les liste
@@ -112,6 +113,7 @@ class Borrows {
 
   Borrows(this.id, this.book, this.client, this.date) {
     borrowsList.add(this);
+    bCounter++;
   }
 
   //Getter pour afficher les informations d'un emprunt.
@@ -190,7 +192,6 @@ void addClient() {
       print("Une erreur dans la saisie du numéro");
     }
   }
-  cCounter++;
 }
 
 //Fonction pour ajouter un nouveau livre
@@ -214,7 +215,6 @@ void addBook() {
       }
     }
   }
-  bookCounter++;
 }
 
 //Fonction pour l'emprunt d'un livre
