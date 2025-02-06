@@ -118,7 +118,7 @@ class Borrows {
 
   //Getter pour afficher les informations d'un emprunt.
   String get show {
-    return "N°$id:__IDclient: ${client.id} : ${client.name} -- IDlivre: ${book.id} : ${book.name} || Date: $date";
+    return "N°$id: Client N°: ${client.id} : ${client.name} \n     Livre N°: ${book.id} : ${book.name} \n     Date: $date \n \n------- \n";
   }
 
   // Méthode statique pour afficher les livres
@@ -126,7 +126,7 @@ class Borrows {
     if (borrowsList.isEmpty) {
       print("Aucun livre n'a encore été emprunté.");
     } else {
-      print("Liste des livres enregistrés :");
+      print("Liste des emprunts :");
       for (var borrow in borrowsList) {
         print(borrow.show);
       }
@@ -302,6 +302,7 @@ void main() {
   Client(cCounter, "Julia TRAORE", 0, 4578496);
   Client(cCounter, "Grâce SAWADOGO", 0, 4578496);
 
+  //Début du program
   int? action = 0;
   do {
     print(
