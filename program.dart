@@ -15,6 +15,7 @@ class Book {
   Book(this.id, this.name, this.author, this.category, this.available,
       this.quantity) {
     booksList.add(this);
+    bCounter++;
   }
 
   //La façon dont les livres  vont être présentés si on les liste
@@ -25,11 +26,7 @@ class Book {
 
   //Setter pour retirer/ajouter un exemplaire en cas d'emprunt/remise
   set setQty(int n) {
-    if (quantity + n >= 0) {
-      quantity += n;
-    } else {
-      print("Stock épuisé.");
-    }
+    quantity += n;
   }
 
   // Méthode statique pour afficher les livres
@@ -45,7 +42,7 @@ class Book {
   }
 
   // Méthode pour afficher récupérer un livre avec son identifiant
-  static Book? getbookById(int id) {
+  static Book? getbookById(int? id) {
     for (Book book in booksList) {
       if (book.id == id) {
         return book; // Renvois le livre
@@ -77,11 +74,7 @@ class Client {
 
   //Setter pour incrémenter/décrémenter le compteur d'emprunts
   set setbCt(int n) {
-    if (borrowCount + n >= 0 && borrowCount + n <= 3) {
-      borrowCount += n;
-    } else {
-      print("Le client ne peut pas emprunter plus de trois livres.");
-    }
+    borrowCount += n;
   }
 
   // Méthode statique pour afficher les clients
@@ -97,7 +90,7 @@ class Client {
   }
 
   // Méthode pour afficher récupérer un client avec son identifiant
-  static Client? getClientById(int id) {
+  static Client? getClientById(int? id) {
     for (Client client in clientsList) {
       if (client.id == id) {
         return client; // Renvois le client
@@ -190,9 +183,11 @@ void addClient() {
     print("Entrez le numéro de téléphone du client.");
     String? tel = stdin.readLineSync();
     int? phone = int.tryParse(tel ?? "0");
-    if (phone != null) {
+    if (phone != null && phone.runtimeType == int) {
       Client(cCounter, name, 0, phone);
       print("Le client a bien été enregistré.");
+    } else {
+      print("Une erreur dans la saisie du numéro");
     }
   }
   cCounter++;
@@ -227,26 +222,28 @@ void recordBorrow() {
   print("Donner l'identifiant du client");
   String? idClient = stdin.readLineSync();
   int? clientId = int.tryParse(idClient ?? "0");
-
-  if (clientId != null) {
+  //Récupération du client (la fonction continuera si le client existe).
+  Client? client = Client.getClientById(clientId);
+  if (client != null) {
     print("Donner l'identifiant du livre");
     String? idBook = stdin.readLineSync();
     int? bookId = int.tryParse(idBook ?? "0");
-    if (bookId != null) {
-      Client? client = Client.getClientById(clientId);
-      Book? book = Book.getbookById(bookId);
-      if (client != null && book != null) {
+    //Récupération du livre (la fonction continuera si le livre existe).
+    Book? book = Book.getbookById(bookId);
+    if (book != null) {
+      if (client.borrowCount <= 3 && book.quantity > 0) {
         book.setQty = -1;
         client.setbCt = 1;
         Borrows(bCounter, book, client, DateTime.now());
-        bCounter++;
         print("Emprunt de livre enregistré.");
+      } else {
+        print("Le client a déjà 3emprunts en cours.");
       }
     } else {
-      print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+      print("Identifiant incorrect.");
     }
   } else {
-    print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+    print("Identifiant incorrect.");
   }
 }
 
@@ -288,7 +285,7 @@ void main() {
         "4. Enregistrer un emprunt \n"
         "5. Enregistrer une remise de livre \n"
         "6. Ajouter un livre \n"
-        "7. Enregistrer un nouvel utilisateur \n"
+        "7. Enregistrer un nouvel abonné \n"
         "8. Quitter");
 
     String? userInput = stdin.readLineSync();
