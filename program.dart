@@ -101,7 +101,7 @@ class Client {
   }
 }
 
-class Borrows {
+class Borrow {
   //Classe des emprunts de livres
   int id;
   Book book;
@@ -109,10 +109,10 @@ class Borrows {
   DateTime date;
 
   //Liste statique pour pouvoir afficher les instances de emprunts
-  static List<Borrows> borrowsList = [];
+  static List<Borrow> borrowList = [];
 
-  Borrows(this.id, this.book, this.client, this.date) {
-    borrowsList.add(this);
+  Borrow(this.id, this.book, this.client, this.date) {
+    borrowList.add(this);
     bCounter++;
   }
 
@@ -121,36 +121,49 @@ class Borrows {
     return "N°$id: Client N°: ${client.id} : ${client.name} \n     Livre N°: ${book.id} : ${book.name} \n     Date: $date \n \n------- \n";
   }
 
+  //Retrait d'un emprunt
+  void removeBorrow() {
+    borrowList.remove(this);
+  }
+
   // Méthode statique pour afficher les livres
-  static void displayBorrows() {
-    if (borrowsList.isEmpty) {
+  static void displayBorrow() {
+    if (borrowList.isEmpty) {
       print("Aucun livre n'a encore été emprunté.");
     } else {
       print("Liste des emprunts :");
-      for (var borrow in borrowsList) {
+      for (var borrow in borrowList) {
         print(borrow.show);
       }
     }
+  }
+
+  static Borrow? getborrowById(int? id) {
+    for (Borrow borrow in borrowList) {
+      if (borrow.id == id) {
+        return borrow; // Renvois l'emprunt
+      }
+    }
+    return null; // Renvoie null en si l'emprunt n'est pas trouvé
   }
 }
 
 class Returns {
   //Classe des remises de livres
   int id;
-  Book book;
-  Client client;
+  Borrow borrow;
   DateTime date;
 
   //Liste statique pour pouvoir afficher les instances de emprunts
   static List<Returns> returnsList = [];
 
-  Returns(this.id, this.book, this.client, this.date) {
+  Returns(this.id, this.borrow, this.date) {
     returnsList.add(this);
   }
 
   //Getter pour afficher les informations d'un emprunt.
   String get show {
-    return "Le client ${client.name} a remis le livre ${book.name} de ${book.author} à la date: $date";
+    return "N°$id: Date d'emprunt: ${borrow.date} \n Client N°: ${borrow.client.id} : ${borrow.client.name} \n     Livre N°: ${borrow.book.id} : ${borrow.book.name} \n     Date de remise: $date \n \n------- \n";
   }
 
   // Méthode statique pour afficher les livres
@@ -239,7 +252,7 @@ void recordBorrow() {
         if (book.quantity > 0) {
           book.setQty = -1;
           client.setbCt = 1;
-          Borrows(bCounter, book, client, DateTime.now());
+          Borrow(bCounter, book, client, DateTime.now());
           print("Emprunt de livre enregistré.");
         } else {
           print("Le stock du livre est épuisé.");
@@ -257,28 +270,20 @@ void recordBorrow() {
 
 //Fonction pour la remise d'un livre
 void recordReturn() {
-  print("Donner l'identifiant du client");
-  String? idClient = stdin.readLineSync();
-  int? clientId = int.tryParse(idClient ?? "0");
-
-  if (clientId != null) {
-    print("Donner l'identifiant du livre");
-    String? idBook = stdin.readLineSync();
-    int? bookId = int.tryParse(idBook ?? "0");
-    if (bookId != null) {
-      Client? client = Client.getClientById(clientId);
-      Book? book = Book.getbookById(bookId);
-      if (client != null && book != null) {
-        book.setQty = 1;
-        client.setbCt = -1;
-        Returns(bCounter, book, client, DateTime.now());
-        print("Remise de livre enregistrée.");
-      }
-    } else {
-      print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+  print("Donner le numéro d'emprunt:");
+  String? idBorrow = stdin.readLineSync();
+  int? borrowId = int.tryParse(idBorrow ?? "0");
+  if (borrowId != null) {
+    //Récupération du livre (la fonction continuera si le livre existe).
+    Borrow? borrow = Borrow.getborrowById(borrowId);
+    if (borrow != null) {
+      Returns(bCounter, borrow, DateTime.now());
+      borrow.removeBorrow();
+      borrow.client.setbCt = 1;
+      borrow.book.setQty = 1;
     }
   } else {
-    print("Il y'a erreur dans votre saisie. Veillez recommencer.");
+    print("Le numéro d'emprunt est incorrect.");
   }
 }
 
@@ -327,7 +332,7 @@ void main() {
         Client.displayClients();
         break;
       case 3:
-        Borrows.displayBorrows();
+        Borrow.displayBorrow();
         break;
       case 4:
         recordBorrow();
