@@ -279,8 +279,9 @@ void recordReturn() {
     if (borrow != null) {
       Returns(bCounter, borrow, DateTime.now());
       borrow.removeBorrow();
-      borrow.client.setbCt = 1;
+      borrow.client.setbCt = -1;
       borrow.book.setQty = 1;
+      print("Le livre a été remis.");
     }
   } else {
     print("Le numéro d'emprunt est incorrect.");
@@ -315,11 +316,12 @@ void main() {
         "1. Lister les livres \n"
         "2. Lister les Clients \n"
         "3. Lister les Emprunts \n"
-        "4. Enregistrer un emprunt \n"
-        "5. Enregistrer une remise de livre \n"
-        "6. Ajouter un livre \n"
-        "7. Enregistrer un nouvel abonné \n"
-        "8. Quitter");
+        "3. Lister les Remises \n"
+        "5. Enregistrer un emprunt \n"
+        "6. Enregistrer une remise de livre \n"
+        "7. Ajouter un livre \n"
+        "8. Enregistrer un nouvel abonné \n"
+        "9. Quitter");
 
     String? userInput = stdin.readLineSync();
     action = int.tryParse(userInput ?? "0");
@@ -335,22 +337,25 @@ void main() {
         Borrow.displayBorrow();
         break;
       case 4:
-        recordBorrow();
+        Returns.displayReturns();
         break;
       case 5:
-        recordReturn();
+        recordBorrow();
         break;
       case 6:
-        addBook();
+        recordReturn();
         break;
       case 7:
-        addClient();
+        addBook();
         break;
       case 8:
+        addClient();
+        break;
+      case 9:
         print("Programme terminé. À bientôt !");
         break;
       default:
         print("Entrée invalide. Veuillez entrer un numéro entre 1 et 8.");
     }
-  } while (action != 8);
+  } while (action != 9);
 }
